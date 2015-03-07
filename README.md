@@ -42,7 +42,7 @@ Ducky, but not all. Servers coupled with Rubber Ducky
 must always produce the same Responses when given the
 same sequence of Requests, not allowing any input
 (such as clocks, weather, etc.) to affect their
-Responses which does not pass as a Request through
+Responses unless that input passes as a Request through
 Rubber Ducky.
 
 It is important to understand that Rubber Ducky (and Raft, etc.)

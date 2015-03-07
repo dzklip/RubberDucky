@@ -1,7 +1,7 @@
 # RubberDucky
 It's much better than a Raft because it is cute and easy to understand
 
-# Rubber Ducky :: Raft :: Paxos
+## Rubber Ducky :: Raft :: Paxos
 
 Rubber Ducky is a refactoring of the Raft system in
 order to make it simple, understandable, and useful.
@@ -24,7 +24,7 @@ Reducing my analysis of the limitations of the Raft Paper to two salient points:
   * The paper reads like a live-blog of extended design meetings. They describe a mechanism, then a couple meetings later they discover an issue and improvise a hack to work around that issue. Then hacks to work around the hacks.
   * The point of Rubber Ducky is to do what the Raft authors failed to do after all that hackery: Revisit and re-adjust goals, expectations, and definitions so that a simple protocol succeeds without hackery.
 
-# Client :: Request :: Server :: Response
+## Client :: Request :: Server :: Response
 
 In a Client-Server system Clients make Requests of a
 single Server, which returns a Response. A competent
@@ -54,7 +54,7 @@ throughput as the single-Server system it replaces, though it will certainly hav
 What Rubber Ducky can add is reliability and enhanced
 persistence.
 
-# Customer :: Implementor :: Author
+## Customer :: Implementor :: Author
 
 There are three players in the Rubber Ducky
 ecosystem. Each player makes certain guarantees. The
@@ -107,13 +107,13 @@ obviously at a "vastly later time" some entries may have expired. The Customer i
 
 As we see the Customer is entirely responsible for the meaning of "replicated" or "synchronized" state between two Servers. All Rubber Ducky guarantees is that every Server within Rubber Ducky will receive exactly the same Quacks in exactly the same order. This is what we mean by "replicated Activity".
 
-# Rubber Ducky —vs— Raft & Paxos
+## Rubber Ducky —vs— Raft & Paxos
 
 Rubber Ducky enhances — adds value — to a Customer's Client-Server system. It is not a work of art to be admired for its own intrinsic beauty.
 
 The Raft paper for instance makes no effort to separate the concerns of its replication from the concerns of the "state machines" which appear somehow related to be the target of their activity. There are bizarre forays into state-machine land such as the paragraphs about using unix "fork" to replicate the state machine's state but it is clear that the state machine within the Raft paper has no purpose except to be the state machine in the Raft paper. This is art for art's sake.
 
-# Rubber Ducky, Raft, and Paxos —vs— Sargasso Mat
+## Rubber Ducky, Raft, and Paxos —vs— Sargasso Mat
 
 Rubber Ducky, Raft, and Paxos all center their activity on a "Distinguished Leader" who has many responsibilities. This creates a bottleneck to performance, and the replacement of a failing Leader is (at least for Raft and Paxos) a slow, complex, and fraught undertaking.
 
@@ -121,6 +121,6 @@ Rubber Ducky and Raft (at least) are Star networks — the Leader must communica
 
 Sargasso Mat is a far faster system and such limits are unacceptable.
 
-# Queen Duck :: Ducklings
+## Queen Duck :: Ducklings
 
 The Distinguished leader in Rubber Duckie is named "Queen Duck". Obviously she is followed by a small flotilla of Ducklings. Because sometimes the Queen is deposed and her successor takes the same name, a specific Queen Duck is always referred to by her number: "Queen Duck 8", "Queen Duck 9", etc.

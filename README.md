@@ -1,10 +1,12 @@
 # RubberDucky
 It's much better than a Raft because it is cute — and easy to understand
 
-Rubber Ducky is a system that reliably replicates activity across a large number of servers. It enhances a Client-Server application by enabling the replication of state across all servers.
+Rubber Ducky is a system that reliably replicates activity across a large number of servers despite the possibility of server failure. It enhances a Client-Server application by enabling the replication of state across all servers.
 
 It is important to understand that Rubber Ducky (and Raft, etc.) enables multiple "replicated" or
 "synchronized" Servers. Rubber Ducky does not enable a "distributed" multi-Server system. A Rubber Ducky system should have approximately the same throughput as the single-Server system it replaces, though it will certainly have greater latency. What Rubber Ducky can add is reliability and enhanced persistence.
+
+It is also important to understand that as we will describe it, Rubber Ducky (and Raft, etc.) do require that most (more than half) of the Servers remain available or else no requests will be processed. Rubber Ducky does guarantee that if most of the servers are unavailable then no Requests will be processed.
 
 ## Rubber Ducky :: Raft :: Paxos
 
@@ -120,3 +122,28 @@ Sargasso Mat is a far faster system and such limits are unacceptable.
 ## Queen Duck :: Ducklings
 
 The Distinguished leader in Rubber Duckie is named "Queen Duck". Obviously she is followed by a small flotilla of Ducklings. Because sometimes the Queen is deposed and because her successor always takes the same name, a specific Queen Duck is always referred to by her number: "Queen Duck 8", "Queen Duck 9", etc.
+
+# SUDDEN LURCH SIDEWAYS INTO DERIVATION FROM PRODUCT REQUIREMENTS
+## The Programer's Axiom of Choice
+* given multiple equally good ways to solve a problem, just pick one and get on with it.
+
+The Customer wants many Servers to "replicate the state" of one Server — we let the Customer choose what that means.
+
+We Choose to satisfy the Customer by delivering exactly the same Requests in exactly the same order to each and every Server — Guaranteed.
+
+Let us assume we start with a bunch of Servers that are all in an initial state and considered "replicated" or "synchronized" by the Customer.
+
+As soon as Rubber Ducky delivers one Request to one Server we are committed: that is the Request that must be processed next by each and every Server. However the first Server is free to process a second Request before any other Server has processed the first Request. We only guarantee eventual Replication.
+
+## First Invariant: If Server S-5 processes Request N after Request M, then every Server that has processed Request M may only process Request N next.
+
+We see that there must be a implicit or explicit ordered list of Requests which have been processed by any Server. We choose to make an explicit list which we call the Ledger. We can see that if two or more Servers have each processed all the listed Requests then it does not matter which of them processes the next Request. However multiple Requests may be waiting to be processed and it is not acceptable for each of two or more Servers to process different Requests next. We Choose to append to the Ledger an ordered list of not-yet-processed Requests. We see that if two different Servers each received a different Request and appended it to the Ledger, then the ordered list of not-yet-processed Requests could be different. Therefore We Choose to require that only one Server shall append Requests to the Ledger.
+
+We Choose to designate a "Distinguished Leader" which is the first to receive any Client Request, and which appends that Request to the Ledger. The Distinguished Leader is then responsible for propagating changes to the Ledger to other Servers. If any other Server receives a Request, it must refer that Request to the Distinguished Leader.
+
+We can see that the Distinguished Leader is not free to process the new Request, because if the Distinguished Leader falls ill then the other Servers may not even know that the new Request exists, and would therefore choose to process some other Request.
+
+Almost the entire point of Rubber Ducky is to satisy its guarantees even when a Server becomes "partitioned" or otherwise unavailable. We Choose to define "unavailable" to mean "cannot engage in two-way communication with at least half of the Servers."
+
+
+Therefore if the Distinguished Leader becomes unavailable it is neccesary to distinguish a new Leader. However when a new Leader is Distinguished it is possible 

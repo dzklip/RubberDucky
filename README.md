@@ -1,5 +1,10 @@
 # RubberDucky
-It's much better than a Raft because it is cute and easy to understand
+It's much better than a Raft because it is cute — and easy to understand
+
+Rubber Ducky is a system that reliably replicates activity across a large number of servers. It enhances a Client-Server application by enabling the replication of state across all servers.
+
+It is important to understand that Rubber Ducky (and Raft, etc.) enables multiple "replicated" or
+"synchronized" Servers. Rubber Ducky does not enable a "distributed" multi-Server system. A Rubber Ducky system should have approximately the same throughput as the single-Server system it replaces, though it will certainly have greater latency. What Rubber Ducky can add is reliability and enhanced persistence.
 
 ## Rubber Ducky :: Raft :: Paxos
 
@@ -44,15 +49,6 @@ same sequence of Requests, not allowing any input
 (such as clocks, weather, etc.) to affect their
 Responses unless that input passes as a Request through
 Rubber Ducky.
-
-It is important to understand that Rubber Ducky (and Raft, etc.)
-enables multiple "replicated" or
-"synchronized" Servers. Rubber Ducky does not
-enable a distributed multi-Server system. A Rubber
-Ducky system should have approximately the same
-throughput as the single-Server system it replaces, though it will certainly have greater latency.
-What Rubber Ducky can add is reliability and enhanced
-persistence.
 
 ## Customer :: Implementor :: Author
 

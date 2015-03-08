@@ -133,6 +133,8 @@ The Distinguished leader in Rubber Duckie is named "Queen Duck". Obviously she i
 ## The Programer's Axiom of Choice
 * given multiple equally good ways to solve a problem, just pick one and get on with it.
 
+In Rubber Ducky we always make the choices that result in the most Raft-like protocol.
+
 The Customer wants many Servers to "replicate the state" of one Server — we let the Customer choose what that means.
 
 We Choose to satisfy the Customer by delivering exactly the same Requests in exactly the same order to each and every Server — Guaranteed.

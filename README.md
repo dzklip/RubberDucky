@@ -123,7 +123,7 @@ Sargasso Mat is a far faster system and such limits are unacceptable.
 
 ## Queen Duck :: Ducklings
 
-The Distinguished leader in Rubber Duckie is named "Queen Duck". Obviously she is followed by a small flotilla of Ducklings. Because sometimes the Queen is deposed and because her successor always takes the same name, a specific Queen Duck is always referred to by her number: "Queen Duck 8", "Queen Duck 9", etc.
+The Distinguished leader in Rubber Duckie is named "Queen Duck". Obviously she is followed by a small flotilla of Ducklings. Because sometimes the Queen is deposed and because her successor always takes the same name, a specific Queen Duck is always referred to by her index: "Queen Duck 8", "Queen Duck 9", etc.
 
 # SUDDEN LURCH SIDEWAYS INTO DERIVATION FROM PRODUCT REQUIREMENTS
 
@@ -193,7 +193,7 @@ We Choose (or have already chosen by implication): valid Ledger entries always f
 
 But we have not precisely defined "Most Complete Ledger" yet, since we know there are circumstances in which Ledger entries may be invalid: a Deposed Distinguished Leader and its followers may not yet realize that the Distinguished Leader has been deposed. We do know that such invalid entries will always be the most recent entries made by the previous leader. In fact, if we require such invalid entries to be purged before new entries are added, then they will always be the most recent entries of the most recent previous leader.
 
-Because there is only one valid Distinguished Leader at any time, they form an ordered list and therefore it is possible to number the Distinguished Leaders. It is also obviously possible to number the Requests they have added into the Ledger. This means that a description of what should be in the Ledger can be reduced to a set of pairs of numbers: Distinguished Leader number and the number of that Distinguished Leader's last valid entry.
+Because there is only one valid Distinguished Leader at any time, they form an ordered list and therefore it is possible to number the Distinguished Leaders. It is also obviously possible to number the Requests they have added into the Ledger. This means that a description of what should be in the Ledger can be reduced to a set of pairs of numbers: the Distinguished Leader index and the index of that Distinguished Leader's last valid entry.
 
 ### Definition:
 * The Ledger shall be a numbered list of Distinguished Leaders, and for each Leader a numbered list of their valid entries.
@@ -228,12 +228,12 @@ The Implementor is responsible for choosing a method to transmit RPCs between No
   * The Follower must purge any invalid entries—
     * This only needs to be done once during the entire Distinguished Leader—Follower relationship.
     * Therefore invalid entries must be detected.
-      * The Distinguished Leader could specify the number of entries its Ledger contains for each previous Distinguished Leader.
       * The Follower could specify the last Distinguished Leader it knows about and the number of entries it has for that Leader.
         * If the last entry it has is valid then all its entries are valid.
         * If the last entry it has is invalid then it only needs to learn the last valid entry for that Distinguished Leader so that it can purge all following entries.
-      * Obviously the second choice involves less information. We Choose that.
-  * The Follower must acquire any missing entries that came before it (re)connecting with the Rubber Ducky Nodes.
+      * The Distinguished Leader could specify the number of entries its Ledger contains for each previous Distinguished Leader.
+      * Obviously the first choice involves less information. We Choose Door #1.
+  * The Follower must acquire any missing entries that came before it (re)connected with the Rubber Ducky Nodes.
     * The Follower must specify which entries it needs next — but it doesn't know, so skip that.
     * After purging invalid entries, the Follower must specify which was the last valid entry it received.
       * Actually, if invalid entries were purged, then it already sent to the Distinguished Leader everything needed to completely determine what valid data it has.
@@ -245,3 +245,17 @@ The Implementor is responsible for choosing a method to transmit RPCs between No
     * Follower Nodes must report to the Distinguished Leader what entries they have persistently recorded.
       * This information need not be different from the report described above necessary for purging invalid entries.
     * The Distinguished Leader may report what entries are persistently recorded by a majority of Nodes so that any Node receiving this report may deliver the appropriate Requests to their attached Servers.
+* Detecting that a Distinguished Leader is unavailable and must be deposed:
+  * The Follower Node must make an RPC and not receive a Response within a Reasonable and Customary time.
+    * But the RPC must be one that allows of an instant or at least very quick Response.
+    * Or the RPC protocol must include an acknowledgement of receiving the RPC (e.g. something like HTTP's "100 — Continue".
+  * Or possibly the Follower Node must expect a routine communication from the Distinguished Leader and not receive it within a Reasonable and Customary duration of time.
+* Discovering the new Distinguished Leader:
+  * Alternatives:
+    * Availability First:
+      * All Nodes which can communicate with a majority of other Nodes must be discovered.
+      * One of the Nodes from that list which has the most Up-to-date Ledger is selected.
+    * Ledger First:
+      * Those Nodes with the most up-to-date Ledger are discovered.
+      * One of the Nodes from that List which can communicate with the most other Nodes *and* at least a majority of Nodes is selected.
+  * Ledger "up-to-dateness" in the absence of a Distinguished Leader is simply the index of the Last Distinguished Leader in the Ledger and the number of entries for that Leader.

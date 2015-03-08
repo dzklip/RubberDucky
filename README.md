@@ -185,7 +185,7 @@ Or it is impossible to known if we have a majority.
 We Choose (or have already chosen by implication): valid Ledger entries always flow from the Distinguished Leader to followers and never in the other direction.
 
 ### Invariant:
-* The New Distinguished Leader in any majority *SHALL BE* the Node with the Most Complete Ledger.
+* The New Distinguished Leader in any majority *SHALL BE* the Node with the Most Complete Ledger — or any one of those Nodes with a Most Complete Ledger.
 
 But we have not precisely defined "Most Complete Ledger" yet, since we know there are circumstances in which Ledger entries may be invalid: a Deposed Distinguished Leader and its followers may not yet realize that the Distinguished Leader has been deposed. We do know that such invalid entries will always be the most recent entries made by the previous leader. In fact, if we require such invalid entries to be purged before new entries are added, then they will always be the most recent entries of the most recent previous leader.
 

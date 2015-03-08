@@ -109,7 +109,9 @@ As we see the Customer is entirely responsible for the meaning of "replicated" o
 
 Rubber Ducky enhances — adds value — to a Customer's Client-Server system. It is not a work of art to be admired for its own intrinsic beauty.
 
-The Raft paper for instance makes no effort to separate the concerns of its replication from the concerns of the "state machines" which appear somehow related to be the target of their activity. There are bizarre forays into state-machine land such as the paragraphs about using unix "fork" to replicate the state machine's state but it is clear that the state machine within the Raft paper has no purpose except to be the state machine in the Raft paper. This is art for art's sake.
+The Raft paper for instance makes no effort to separate the concerns of its replication from the concerns of the "state machines" which appear somehow intended to be the target of their activity. There are bizarre forays into state-machine land such as the paragraphs about using unix "fork" to replicate the state machine's state but it is clear that the state machine within the Raft paper has no purpose except to be the state machine in the Raft paper. This is art for art's sake.
+
+Also Rubber Ducky doesn't care if the Server is a "state machine".
 
 ## Rubber Ducky, Raft, and Paxos —vs— Sargasso Mat
 

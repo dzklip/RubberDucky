@@ -217,4 +217,5 @@ The Implementor defines "Reasonable and Customary" or allows the Customer to con
 Thrashing — the constant change of leadership because of network or similar trouble — can lead to poor overall performance. If only a slim majority of Nodes are available then it will be impossible to replace an intermittently available Distinguished Leader unless some other Node has copied every Request in the Distinguished Leader's Ledger into its own Ledger. To take advantage of this it is safe for the Implementor to implement: when choosing a new Distinguished Leader if multiple Nodes all share the Most Complete Ledger designation, then any method to break the tie is acceptable — including especially choosing the Node that was least recently Distinguished Leader or choosing at random.
 
 ## RPCs
-The Implementor is responsible for choosing a method to transmit RPCs between Nodes. Any mechanism will do. Typical implementations include HTTP, "sunrpc", and purely *ad hoc* protocols.
+The Implementor is responsible for choosing a method to transmit RPCs between Nodes. Any mechanism will do. Typical implementations include HTTP, "sunrpc", "Kafka", and purely *ad hoc* protocols. The only restrictions are that it must be possible to transmit the necessary information and it must be possible to receive a timely response.
+

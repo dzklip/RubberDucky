@@ -124,6 +124,12 @@ Sargasso Mat is a far faster system and such limits are unacceptable.
 The Distinguished leader in Rubber Duckie is named "Queen Duck". Obviously she is followed by a small flotilla of Ducklings. Because sometimes the Queen is deposed and because her successor always takes the same name, a specific Queen Duck is always referred to by her number: "Queen Duck 8", "Queen Duck 9", etc.
 
 # SUDDEN LURCH SIDEWAYS INTO DERIVATION FROM PRODUCT REQUIREMENTS
+
+## Terminology: just so we don't confused
+* The Customer owns Clients which make Requests which are represented as Messages (bytes) and Servers which process those Requests and perhaps deliver Responses.
+* The Implementor owns Nodes which communicate with each other using RPCs. An RPC always requires a response.
+* Nodes accept Requests and eventually deliver them to Servers, after communicating with each other using RPCs.
+
 ## The Programer's Axiom of Choice
 * given multiple equally good ways to solve a problem, just pick one and get on with it.
 
@@ -133,20 +139,20 @@ We Choose to satisfy the Customer by delivering exactly the same Requests in exa
 
 Let us assume we start with a bunch of Servers that are all in an initial state and considered "replicated" or "synchronized" by the Customer.
 
-As soon as Rubber Ducky delivers one Request to one Server we are committed: that is the Request that must be processed next by each and every Server. However the first Server is free to process a second Request before any other Server has processed the first Request. We only guarantee eventual Replication.
+As soon as Rubber Ducky delivers the first Request to the first Server we are committed: that is the Request that must be processed first by each and every Server. However the first Server is free to process a second Request before any other Server has processed the first Request. We only guarantee eventual Replication.
 
 ### Invariant:
 * If Server S processes Request N after Request M, then every Server that has processed Request M may only process Request N next.
 
-We see that there must be an implicit or explicit ordered list of Requests which have been processed by any Server. We choose to make an explicit list which we call the Ledger. We can see that if two or more Servers have each processed all the listed Requests then it does not matter which of them processes the next Request. However multiple Requests may be waiting to be processed and it is not acceptable for each of two or more Servers to process different Requests next. We Choose to append to the Ledger an ordered list of not-yet-processed Requests. We see that if two different Servers each received a different Request and appended it to the Ledger, then the ordered list of not-yet-processed Requests could be different. Therefore We Choose to require that only one Server shall append Requests to the Ledger.
+We see that there must be an implicit or explicit ordered list of Requests which have been processed by any Server. We choose to make an explicit list which we call the Ledger. We can see that if two or more Servers have each processed all the listed Requests then it does not matter which of them processes the next Request. However multiple Requests may be waiting to be processed and it is not acceptable for each of two or more Servers to process different Requests next. We Choose to append to the Ledger an ordered list of not-yet-processed Requests. We see that if two different Nodes each received a different Request and appended it to the Ledger, then the ordered list of not-yet-processed Requests could be different. Therefore We Choose to require that only one Node shall append Requests to the Ledger.
 
-We Choose to designate a "Distinguished Leader" which is the first to receive any Client Request, and which appends that Request to the Ledger. The Distinguished Leader is then responsible for propagating changes to the Ledger to other Servers. If any other Server receives a Request, it must refer that Request to the Distinguished Leader.
+We Choose to designate a "Distinguished Leader" which is the first to receive any Client Request, and which appends that Request to the Ledger. The Distinguished Leader is then responsible for propagating changes to the Ledger to other Nodes. If any other Node receives a Request, it must refer that Request to the Distinguished Leader.
 
-We can see that the Distinguished Leader is not yet free to process the new Request, because if the Distinguished Leader becomes unavailable then the other Servers may not even know that the new Request exists, and could therefore choose to process some other Request next.
+We can see that the Distinguished Leader is not yet free to *process* the new Request, because if the Distinguished Leader becomes unavailable then the other Nodes may not even know that the new Request exists, and could therefore choose to process some other Request next.
 
-Almost the entire point of Rubber Ducky is to satisy its guarantees even when a Server becomes "partitioned" or otherwise unavailable. We Choose to define "unavailable" to mean "cannot engage in two-way communication with at least half of the other Servers."
+Almost the entire point of Rubber Ducky is to satisfy its guarantees even when a Node becomes "partitioned" or otherwise unavailable. We Choose to define "unavailable" to mean "cannot engage in two-way communication with at least half of the other Nodes."
 
-Therefore if the Distinguished Leader becomes unavailable it is neccesary to distinguish a new Leader. However when a new Leader is Distinguished it is possible that the old leader may as yet be unaware that it has been deposed. This means that both the Deposed Distinguished Leader and the New Distinguished Leader may be adding different Requests to their copies of the Ledger at the same time. Worse, it is possible that a few Servers (but obviously fewer than half) are still following the Deposed Distinguished Leader and accepting its updates to the Ledger. This violates our rule that only one Server may make updates to the Ledger.
+Therefore if the Distinguished Leader becomes unavailable it is neccesary to distinguish a new Leader. However when a new Leader is Distinguished it is possible that the old leader may as yet be unaware that it has been deposed. This means that both the Deposed Distinguished Leader and the New Distinguished Leader may be adding different Requests to their copies of the Ledger at the same time. Worse, it is possible that a few Nodes (but obviously fewer than half) are still following the Deposed Distinguished Leader and accepting its updates to the Ledger. This violates our rule that only one Node may make updates to the Ledger.
 
 ## To reiterate:
 * Only a Distinguished Leader may append Requests to the Ledger.
@@ -154,44 +160,53 @@ Therefore if the Distinguished Leader becomes unavailable it is neccesary to dis
 * Therefore the presence of a Request in the Ledger is not enough to allow it to be processed.
 * A Deposed Leader may rejoin the group and follow the New Leader while having invalid entries in its Ledger.
 * Followers of a Deposed Leader may also have invalid entries in their Ledgers.
-* The Distinguished Leader must be in communication with at least half of the other Servers.
+* The Distinguished Leader must be in communication with at least half of the other Nodes.
 
-And we make an observation: If two Sets each contain a majority (*more* than half) of the Servers, then there will be at least one Server that is in both Sets. Since a new Leader cannot be Distinguished unless it is in communication with at least half of the other Servers, it follows that together they form a group containing a majority of the Servers. Therefore any fact known to a majority of the Servers will be known by at least one Server in communication with the Distinguished Leader (or known to the Distinguished Leader itself, of course). We choose not to let Servers forget any important facts. These specifically include valid entries in the Ledger.
+And we make an observation: If two Sets each contain a majority (*more* than half) of the Nodes, then there will be at least one Node that is in both Sets. Since a new Leader cannot be Distinguished unless it is in communication with at least half of the other Nodes, it follows that together they form a group containing a majority of the Nodes. Therefore any fact known to a majority of the Nodes will be known by at least one Node in communication with the Distinguished Leader (or known to the Distinguished Leader itself, of course). We choose not to let Nodes forget any important facts. These specifically include valid entries in the Ledger.
 
 ### Requirement:
-* The Implementor must guarantee that certain facts (such as valid entries in the Ledger) are persistent even if the Server holding them crashes or power-cycles or whatever and recovers.
+* The Implementor must guarantee that certain facts (such as valid entries in the Ledger) are persistent even if the Node holding them crashes or power-cycles or whatever and recovers.
 
 ### Invariant:
-* any Ledger Entries that are known to a majority of the Servers will always be known to some Server within the majority of available Servers which includes the Distinguished Leader.
+* any Ledger Entries that are some point in time known to a majority of the Nodes will thereafter *always* be known to some Node within the majority of available Nodes which includes the Distinguished Leader.
 
 ### Requirement:
-* There *MUST* be a known number of Servers and the complete list of Servers must be known to every Server.
+* There *MUST* be a known number of Nodes and the complete list of Nodes must be known to every Node.
 
 Or it is impossible to known if we have a majority.
 
 ## About Processing Requests:
-* Any valid Requests in the Ledger which are *KNOWN* to be *known* to a majority of the Servers may safely be processed in the specified order. Once they are known by a majority, we can guarantee that they will always be known by some Server in any future majority.
+* Any valid Requests in the Ledger which are *KNOWN* to be *known* to a majority of the Nodes may safely be given to Servers to be processed in the specified order. Once they are known by a majority, we can guarantee that they will always be known by some Node in any future majority.
 
-And we Choose (or have already chosen by implication): valid Ledger entries always flow from the Distinguished Leader to followers and never in the other direction.
+We Choose (or have already chosen by implication): valid Ledger entries always flow from the Distinguished Leader to followers and never in the other direction.
 
 ### Invariant:
-* The New Distinguished Leader in any majority *SHALL BE* the Server with the most complete Ledger.
+* The New Distinguished Leader in any majority *SHALL BE* the Node with the Most Complete Ledger.
 
 But we have not precisely defined "Most Complete Ledger" yet, since we know there are circumstances in which Ledger entries may be invalid: a Deposed Distinguished Leader and its followers may not yet realize that the Distinguished Leader has been deposed. We do know that such invalid entries will always be the most recent entries made by the previous leader. In fact, if we require such invalid entries to be purged before new entries are added, then they will always be the most recent entries of the most recent previous leader.
 
-Because there is only one valid Distinguished Leader at any time, they form an ordered list and therefore it is possible to number the Distinguished Leaders. It is also obviously possible to number the Requests they have added into the Ledger. This means that a description of what should be in the Ledger can be reduced to a set of pairs of numbers, Distinguished Leader number, and the number of that Distinguished Leader's last valid entry.
+Because there is only one valid Distinguished Leader at any time, they form an ordered list and therefore it is possible to number the Distinguished Leaders. It is also obviously possible to number the Requests they have added into the Ledger. This means that a description of what should be in the Ledger can be reduced to a set of pairs of numbers: Distinguished Leader number and the number of that Distinguished Leader's last valid entry.
 
-### Requirement:
-* The Valid Ledger shall be a numbered list of Distinguished Leaders, and for each Leader a numbered list of their valid entries.
+### Definition:
+* The Ledger shall be a numbered list of Distinguished Leaders, and for each Leader a numbered list of their valid entries.
 
 ### Subtlety alert
 * Do remember that valid entries includes all processed entries possibly followed by some unprocessed entries. The definition of valid is not "has been processed" or "can now be processed" even though it is true that every entry which has been processed must also be valid. The definition of "valid entry in the Ledger" is exactly "known to the current Distinguished Leader". This should be unsurprising since obviously no known-to-be-invalid entries were ever made in the Ledger.
 
-### Invariant:
+### Requirement:
 * before a follower accepts any new entry from a Distinguished Leader, it shall have purged all invalid entries from the most recent Distinguished Leader from which it had accepted entries AND it shall have accepted all previous valid entries which it had not yet accepted.
 
-This means that any follower holding entries from any Distinguished Leader must have all and only valid records for all previous leaders.
+This means that any follower holding entries any from some Distinguished Leader must have all and only valid entries for all previous leaders.
 
 ### Invariant:
-* The "Most Complete Ledger" is always the ledger with the most recent Distinguished Leader and for that leader the one with the most entries.
+* The "Most Complete Ledger" is always the ledger with entries from the most recent Distinguished Leader and for that leader the one with the most entries.
+
+It follows that the current Distinguished Leader always has the Most Complete Ledger.
+
+What does it mean to be "in communication" with another Node?
+
+### Definition:
+* a Node is "unresponsive" when it fails to respond to an RPC from another Node within a time period considered Reasonable and Customary.
+
+The Implementor defines "Reasonable and Customary" or allows the Customer to configure appropriate values. These values have no effect upon the guarantees made by Rubber Ducky but rather affect system behavior in the real world and should be tuned so as to provide an appropriate level of responsiveness to serious network partitions without causing thrashing due to minor communication delays.
 

@@ -130,10 +130,10 @@ The Distinguished leader in Rubber Duckie is named "Queen Duck". Obviously she i
 ## Terminology: just so we don't get (more) confused
 We need to distinguish between the Client-Request-Server-Response pattern of the Customer's Client-Server system and the similar Peer-To-Peer requests and responses necessary between nodes of Rubber Ducky to allow the implementation of Rubber Ducky to satisfy its Contracts. Therefore we simply declare: 
 * The Customer owns Clients which make Requests which are represented as Messages (bytes) and Servers which process those Requests and perhaps deliver Responses.
-* The Implementor owns Nodes which communicate with each other using RPCs. An RPC always requires a response.
+* The Implementor owns [Rubber Ducky] Nodes which communicate with each other using RPCs [Remote Procedure Calls, a.k.a. "Requests"]. An RPC always requires a response.
 * Nodes accept Requests and eventually deliver them to Servers, after communicating with each other using RPCs.
 
-Understand that a "Node" and an "RPC" are simply a "Rubber Ducky Server" and a "Rubber Ducky Request and Response". We use the new terms in order to make the interactions between Nodes (Rubber Ducky Servers) and Servers (Customer Servers) easier to follow.
+Understand that a "Node" and an "RPC" are simply a "Rubber Ducky Server" and a "Rubber Ducky Request and Response". We use the new terms in order to make the interactions between Nodes (Rubber Ducky Servers) and Servers (Customer Servers) easier to distinguish in the following.
 
 ## The Programer's Axiom of Choice
 * given multiple equally good ways to solve a problem, just pick one and get on with it.

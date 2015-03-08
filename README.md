@@ -223,7 +223,7 @@ Thrashing — the constant change of leadership because of network or similar tr
 ## RPCs
 The Implementor is responsible for choosing a method to transmit RPCs between Nodes. Any mechanism will do. Typical implementations include HTTP, "sunrpc", "Kafka", and purely *ad hoc* protocols. The only restrictions are that it must be possible to transmit the necessary information and it must be possible to receive a timely response.
 
-# Protocols — as Derived:
+# Protocols — Deriving them:
 * Updating the Ledgers of Followers:
   * The Follower must purge any invalid entries—
     * This only needs to be done once during the entire Distinguished Leader—Follower relationship.
@@ -251,6 +251,8 @@ The Implementor is responsible for choosing a method to transmit RPCs between No
     * Or the RPC protocol must include an acknowledgement of receiving the RPC (e.g. something like HTTP's "100 — Continue".
   * Or possibly the Follower Node must expect a routine communication from the Distinguished Leader and not receive it within a Reasonable and Customary duration of time.
 * Discovering the new Distinguished Leader:
+  * Motivated by a loss of contact with the Distinguished Leader.
+    * Brand new or newly recovered Nodes may need to merely discover the existing Distinguished Leader and these two protocols may overlap.
   * Alternatives:
     * Availability First:
       * All Nodes which can communicate with a majority of other Nodes must be discovered.
@@ -258,4 +260,19 @@ The Implementor is responsible for choosing a method to transmit RPCs between No
     * Ledger First:
       * Those Nodes with the most up-to-date Ledger are discovered.
       * One of the Nodes from that List which can communicate with the most other Nodes *and* at least a majority of Nodes is selected.
+  * Availability First is probably cooler because you can't find an up-to-date Node unless you can communicate with it.
   * Ledger "up-to-dateness" in the absence of a Distinguished Leader is simply the index of the Last Distinguished Leader in the Ledger and the number of entries for that Leader.
+  * Therefore the Protocol must Satisfy:
+    * On the Request side:
+      * Communicate "trying to find the correct Distinguished Leader".
+      * From the Node's Ledger communicate the index of the Last Leader and the number of Entries in the Last Leader's record.
+    * On the Response side:
+      * Communicate the identity of the current Distinguished Leader and its index in the Ledger.
+      * From the Responding Node's Ledger communicate the index of Last Leader and the number of Entries in the Last Leader's record.
+    * Conclusion:
+      * If the requesting Node receives a response from a majority of Nodes and it has in every case the most up-to-date Ledger when compared to both the Responding Node and the Responding Node's version of the Distinguished Leader 
+
+# Algorithms — as Derived:
+* A freshly initialized or recovered Node must have configured:
+  * a list of all Nodes.
+* Discover if there is a Distinguished Leader

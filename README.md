@@ -125,7 +125,7 @@ The Distinguished leader in Rubber Duckie is named "Queen Duck". Obviously she i
 
 # SUDDEN LURCH SIDEWAYS INTO DERIVATION FROM PRODUCT REQUIREMENTS
 
-## Terminology: just so we don't confused
+## Terminology: just so we don't get (more) confused
 * The Customer owns Clients which make Requests which are represented as Messages (bytes) and Servers which process those Requests and perhaps deliver Responses.
 * The Implementor owns Nodes which communicate with each other using RPCs. An RPC always requires a response.
 * Nodes accept Requests and eventually deliver them to Servers, after communicating with each other using RPCs.

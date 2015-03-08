@@ -135,7 +135,8 @@ Let us assume we start with a bunch of Servers that are all in an initial state 
 
 As soon as Rubber Ducky delivers one Request to one Server we are committed: that is the Request that must be processed next by each and every Server. However the first Server is free to process a second Request before any other Server has processed the first Request. We only guarantee eventual Replication.
 
-### Invariant: If Server S processes Request N after Request M, then every Server that has processed Request M may only process Request N next.
+### Invariant:
+* If Server S processes Request N after Request M, then every Server that has processed Request M may only process Request N next.
 
 We see that there must be an implicit or explicit ordered list of Requests which have been processed by any Server. We choose to make an explicit list which we call the Ledger. We can see that if two or more Servers have each processed all the listed Requests then it does not matter which of them processes the next Request. However multiple Requests may be waiting to be processed and it is not acceptable for each of two or more Servers to process different Requests next. We Choose to append to the Ledger an ordered list of not-yet-processed Requests. We see that if two different Servers each received a different Request and appended it to the Ledger, then the ordered list of not-yet-processed Requests could be different. Therefore We Choose to require that only one Server shall append Requests to the Ledger.
 
@@ -157,11 +158,14 @@ Therefore if the Distinguished Leader becomes unavailable it is neccesary to dis
 
 And we make an observation: If two Sets each contain a majority (*more* than half) of the Servers, then there will be at least one Server that is in both Sets. Since a new Leader cannot be Distinguished unless it is in communication with at least half of the other Servers, it follows that together they form a group containing a majority of the Servers. Therefore any fact known to a majority of the Servers will be known by at least one Server in communication with the Distinguished Leader (or known to the Distinguished Leader itself, of course). We choose not to let Servers forget any important facts. These specifically include valid entries in the Ledger.
 
-### Requirement: The Implementor must guarantee that certain facts (such as valid entries in the Ledger) are persistent even if the Server holding them crashes or power-cycles or whatever and recovers.
+### Requirement:
+* The Implementor must guarantee that certain facts (such as valid entries in the Ledger) are persistent even if the Server holding them crashes or power-cycles or whatever and recovers.
 
-### Invariant: any Ledger Entries that are known to a majority of the Servers will always be known to some Server within the majority of available Servers which includes the Distinguished Leader.
+### Invariant:
+* any Ledger Entries that are known to a majority of the Servers will always be known to some Server within the majority of available Servers which includes the Distinguished Leader.
 
-### Requirement: There *MUST* be a known number of Servers and the complete list of Servers must be known to every Server.
+### Requirement:
+* There *MUST* be a known number of Servers and the complete list of Servers must be known to every Server.
 
 Or it is impossible to known if we have a majority.
 
@@ -170,20 +174,24 @@ Or it is impossible to known if we have a majority.
 
 And we Choose (or have already chosen by implication): valid Ledger entries always flow from the Distinguished Leader to followers and never in the other direction.
 
-### Invariant: The New Distinguished Leader in any majority *SHALL BE* the Server with the most complete Ledger.
+### Invariant:
+* The New Distinguished Leader in any majority *SHALL BE* the Server with the most complete Ledger.
 
 But we have not precisely defined "Most Complete Ledger" yet, since we know there are circumstances in which Ledger entries may be invalid: a Deposed Distinguished Leader and its followers may not yet realize that the Distinguished Leader has been deposed. We do know that such invalid entries will always be the most recent entries made by the previous leader. In fact, if we require such invalid entries to be purged before new entries are added, then they will always be the most recent entries of the most recent previous leader.
 
 Because there is only one valid Distinguished Leader at any time, they form an ordered list and therefore it is possible to number the Distinguished Leaders. It is also obviously possible to number the Requests they have added into the Ledger. This means that a description of what should be in the Ledger can be reduced to a set of pairs of numbers, Distinguished Leader number, and the number of that Distinguished Leader's last valid entry.
 
-### Requirement: The Valid Ledger shall be a numbered list of Distinguished Leaders, and for each Leader a numbered list of their valid entries.
+### Requirement:
+* The Valid Ledger shall be a numbered list of Distinguished Leaders, and for each Leader a numbered list of their valid entries.
 
 ### Subtlety alert
-Do remember that valid entries includes all processed entries possibly followed by some unprocessed entries. The definition of valid is not "has been processed" or "can now be processed" even though it is true that every entry which has been processed must also be valid. The definition of "valid entry in the Ledger" is exactly "known to the current Distinguished Leader". This should be unsurprising since obviously no known-to-be-invalid entries were ever made in the Ledger.
+* Do remember that valid entries includes all processed entries possibly followed by some unprocessed entries. The definition of valid is not "has been processed" or "can now be processed" even though it is true that every entry which has been processed must also be valid. The definition of "valid entry in the Ledger" is exactly "known to the current Distinguished Leader". This should be unsurprising since obviously no known-to-be-invalid entries were ever made in the Ledger.
 
-### Invariant: before a follower accepts any new entry from a Distinguished Leader, it shall have purged all invalid entries from the most recent Distinguished Leader from which it had accepted entries AND it shall have accepted all previous valid entries which it had not yet accepted.
+### Invariant:
+* before a follower accepts any new entry from a Distinguished Leader, it shall have purged all invalid entries from the most recent Distinguished Leader from which it had accepted entries AND it shall have accepted all previous valid entries which it had not yet accepted.
 
 This means that any follower holding entries from any Distinguished Leader must have all and only valid records for all previous leaders.
 
-### Invariant: The "Most Complete Ledger" is always the ledger with the most recent Distinguished Leader and for that leader the one with the most entries.
+### Invariant:
+* The "Most Complete Ledger" is always the ledger with the most recent Distinguished Leader and for that leader the one with the most entries.
 

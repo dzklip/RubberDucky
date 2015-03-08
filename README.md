@@ -212,5 +212,9 @@ What does it mean to be "in communication" with another Node?
 ### Definition:
 * a Node is "unresponsive" when it fails to respond to an RPC from another Node within a time period considered Reasonable and Customary.
 
-The Implementor defines "Reasonable and Customary" or allows the Customer to configure appropriate values. These values have no effect upon the guarantees made by Rubber Ducky but rather affect system behavior in the real world and should be tuned so as to provide an appropriate level of responsiveness to serious network partitions without causing thrashing due to minor communication delays.
+The Implementor defines "Reasonable and Customary" or allows the Customer to configure appropriate values. These values have no effect upon the guarantees made by Rubber Ducky but rather affect system behavior in the real world and should be tuned so as to provide an appropriate level of responsiveness to serious network partitions without causing thrashing due to minor communication delays. Do ensure that unresponsiveness is due to behavior of the Node or network and not ancillary sub-systems such as DNS.
 
+Thrashing — the constant change of leadership because of network or similar trouble — can lead to poor overall performance. If only a slim majority of Nodes are available then it will be impossible to replace an intermittently available Distinguished Leader unless some other Node has copied every Request in the Distinguished Leader's Ledger into its own Ledger. To take advantage of this it is safe for the Implementor to implement: when choosing a new Distinguished Leader if multiple Nodes all share the Most Complete Ledger designation, then any method to break the tie is acceptable — including especially choosing the Node that was least recently Distinguished Leader or choosing at random.
+
+## RPCs
+The Implementor is responsible for choosing a method to transmit RPCs between Nodes. Any mechanism will do. Typical implementations include HTTP, "sunrpc", and purely *ad hoc* protocols.

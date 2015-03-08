@@ -224,24 +224,24 @@ Thrashing — the constant change of leadership because of network or similar tr
 The Implementor is responsible for choosing a method to transmit RPCs between Nodes. Any mechanism will do. Typical implementations include HTTP, "sunrpc", "Kafka", and purely *ad hoc* protocols. The only restrictions are that it must be possible to transmit the necessary information and it must be possible to receive a timely response.
 
 # Protocols — as Derived:
-* Updating the Ledgers of Followers:
-** The Follower must purge any invalid entries—
-*** This only needs to be done once during the entire Distinguished Leader—Follower relationship.
-*** Therefore invalid entries must be detected.
-**** The Distinguished Leader could specify the number of entries its Ledger contains for each previous Distinguished Leader.
-**** The Follower could specify the last Distinguished Leader it knows about and the number of entries it has for that Leader.
-***** If the last entry it has is valid then all its entries are valid.
-***** If the last entry it has is invalid then it only needs to learn the last valid entry for that Distinguished Leader so that it can purge all following entries.
-**** Obviously the second choice involves less information. We Choose that.
-** The Follower must acquire any missing entries that came before it (re)connecting with the Rubber Ducky Nodes.
-*** The Follower must specify which entries it needs next — but it doesn't know, so skip that.
-*** After purging invalid entries, the Follower must specify which was the last valid entry it received.
-**** Actually, if invalid entries were purged, then it already sent to the Distinguished Leader everything needed to completely determine what valid data it has.
-*** The Distinguished Leader must supply any missing entries in order.
-** The Follower must accept new entries from the Distinguished Leader.
-*** But not until invalid entries have been purged and all valid entries recorded.
-* Enabling the processing of Requests by Servers:
-** The Distinguished Leader must detect when an update to the Ledger has been persistently recorded in a majority of Nodes.
-*** Follower Nodes must report to the Distinguished Leader what entries they have persistently recorded.
-**** This information need not be different from the report described above necessary for purging invalid entries.
-*** The Distinguished Leader may report what entries are persistently recorded by a majority of Nodes so that any Node receiving this report may deliver the appropriate Requests to their attached Servers.
+ * Updating the Ledgers of Followers:
+ ** The Follower must purge any invalid entries—
+ *** This only needs to be done once during the entire Distinguished Leader—Follower relationship.
+ *** Therefore invalid entries must be detected.
+ **** The Distinguished Leader could specify the number of entries its Ledger contains for each previous Distinguished Leader.
+ **** The Follower could specify the last Distinguished Leader it knows about and the number of entries it has for that Leader.
+ ***** If the last entry it has is valid then all its entries are valid.
+ ***** If the last entry it has is invalid then it only needs to learn the last valid entry for that Distinguished Leader so that it can purge all following entries.
+ **** Obviously the second choice involves less information. We Choose that.
+ ** The Follower must acquire any missing entries that came before it (re)connecting with the Rubber Ducky Nodes.
+ *** The Follower must specify which entries it needs next — but it doesn't know, so skip that.
+ *** After purging invalid entries, the Follower must specify which was the last valid entry it received.
+ **** Actually, if invalid entries were purged, then it already sent to the Distinguished Leader everything needed to completely determine what valid data it has.
+ *** The Distinguished Leader must supply any missing entries in order.
+ ** The Follower must accept new entries from the Distinguished Leader.
+ *** But not until invalid entries have been purged and all valid entries recorded.
+ * Enabling the processing of Requests by Servers:
+ ** The Distinguished Leader must detect when an update to the Ledger has been persistently recorded in a majority of Nodes.
+ *** Follower Nodes must report to the Distinguished Leader what entries they have persistently recorded.
+ **** This information need not be different from the report described above necessary for purging invalid entries.
+ *** The Distinguished Leader may report what entries are persistently recorded by a majority of Nodes so that any Node receiving this report may deliver the appropriate Requests to their attached Servers.

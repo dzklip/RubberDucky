@@ -131,11 +131,12 @@ The Distinguished leader in Rubber Duckie is named "Queen Duck". Obviously she i
 We need to distinguish between the Client-Request-Server-Response pattern of the Customer's Client-Server system and the similar Peer-To-Peer requests and responses necessary between nodes of Rubber Ducky to allow the implementation of Rubber Ducky to satisfy its Contracts. Therefore we simply declare: 
 * The Customer owns Clients which make Requests which are represented as Messages (bytes) and Servers which process those Requests and perhaps deliver Responses.
 * The Implementor owns [Rubber Ducky] Nodes which communicate with each other using RPCs [Remote Procedure Calls, a.k.a. "Requests"]. An RPC always requires a response.
-* Nodes accept Requests and eventually deliver them to Servers, after communicating with each other using RPCs.
+* Each Node is attached to a Server.
+* Some Node or Nodes accept Requests and these are eventually delivered to Servers, after the Nodes communicate with each other using RPCs.
 
 Understand that a "Node" and an "RPC" are simply a "Rubber Ducky Server" and a "Rubber Ducky Request and Response". We use the new terms in order to make the interactions between Nodes (Rubber Ducky Servers) and Servers (Customer Servers) easier to distinguish in the following.
 
-## The Programer's Axiom of Choice
+## The Engineer's Axiom of Choice
 * given multiple equally good ways to solve a problem, just pick one and get on with it.
 
 In Rubber Ducky we always make the choices that result in the most Raft-like protocol.
@@ -222,3 +223,25 @@ Thrashing — the constant change of leadership because of network or similar tr
 ## RPCs
 The Implementor is responsible for choosing a method to transmit RPCs between Nodes. Any mechanism will do. Typical implementations include HTTP, "sunrpc", "Kafka", and purely *ad hoc* protocols. The only restrictions are that it must be possible to transmit the necessary information and it must be possible to receive a timely response.
 
+# Protocols — as Derived:
+* Updating the Ledgers of Followers:
+** The Follower must purge any invalid entries—
+*** This only needs to be done once during the entire Distinguished Leader—Follower relationship.
+*** Therefore invalid entries must be detected.
+**** The Distinguished Leader could specify the number of entries its Ledger contains for each previous Distinguished Leader.
+**** The Follower could specify the last Distinguished Leader it knows about and the number of entries it has for that Leader.
+***** If the last entry it has is valid then all its entries are valid.
+***** If the last entry it has is invalid then it only needs to learn the last valid entry for that Distinguished Leader so that it can purge all following entries.
+**** Obviously the second choice involves less information. We Choose that.
+** The Follower must acquire any missing entries that came before it (re)connecting with the Rubber Ducky Nodes.
+*** The Follower must specify which entries it needs next — but it doesn't know, so skip that.
+*** After purging invalid entries, the Follower must specify which was the last valid entry it received.
+**** Actually, if invalid entries were purged, then it already sent to the Distinguished Leader everything needed to completely determine what valid data it has.
+*** The Distinguished Leader must supply any missing entries in order.
+** The Follower must accept new entries from the Distinguished Leader.
+*** But not until invalid entries have been purged and all valid entries recorded.
+* Enabling the processing of Requests by Servers:
+** The Distinguished Leader must detect when an update to the Ledger has been persistently recorded in a majority of Nodes.
+*** Follower Nodes must report to the Distinguished Leader what entries they have persistently recorded.
+**** This information need not be different from the report described above necessary for purging invalid entries.
+*** The Distinguished Leader may report what entries are persistently recorded by a majority of Nodes so that any Node receiving this report may deliver the appropriate Requests to their attached Servers.
